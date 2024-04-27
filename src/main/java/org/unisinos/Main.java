@@ -11,43 +11,33 @@ public class Main {
     private static final Scanner sc = new Scanner(System.in);
     private static final String caminhoArquivoInstrucoes = "src/main/resources/instructions.txt";
     private static List<String> listaOperacoes = new ArrayList<>();
-
+    
     public static void main(String[] args) throws FileNotFoundException {
         listaOperacoes = carregaArquivoEmLista(caminhoArquivoInstrucoes);
 
-        int i = 0;
         while(true) {
 
-            InstructionStruct struct = new InstructionStruct(0, 0, 0, 0, 0, 0, 0, false);
-
-            struct = InstructionFetch(struct);
-            struct = InstructionDecode(struct);
-            struct = ExecuteAddrCalc(struct);
-            struct = MemoryAccess(struct);
-            struct = WriteBack(struct);
-
             sc.next();
-
         }
     }
 
-    private static InstructionStruct WriteBack(final InstructionStruct struct) {
+    private static InstructionStruct writeBack(final InstructionStruct struct) {
         return null;
     }
 
-    private static InstructionStruct MemoryAccess(final InstructionStruct struct) {
+    private static InstructionStruct memoryAccess(final InstructionStruct struct) {
         return null;
     }
 
-    private static InstructionStruct ExecuteAddrCalc(final InstructionStruct struct) {
+    private static InstructionStruct executeAddrCalc(final InstructionStruct struct) {
         return null;
     }
 
-    private static InstructionStruct InstructionDecode(final InstructionStruct struct) {
+    private static InstructionStruct instructionDecode(final InstructionStruct struct) {
         return null;
     }
 
-    private static InstructionStruct InstructionFetch(final InstructionStruct struct) {
+    private static InstructionStruct instructionFetch(final InstructionStruct struct) {
         return null;
     }
 
