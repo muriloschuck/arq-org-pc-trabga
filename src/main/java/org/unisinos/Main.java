@@ -11,34 +11,61 @@ public class Main {
     private static final Scanner sc = new Scanner(System.in);
     private static final String caminhoArquivoInstrucoes = "src/main/resources/instructions.txt";
     private static List<String> listaOperacoes = new ArrayList<>();
-    
+    private static int PC = 0;
+    private static InstructionStruct entradaInstructionFetch;
+    private static InstructionStruct saidaInstructionFetch = null, entradaInstructionDecode = null,
+            saidaInstructionDecode = null, entradaExecuteAddrCalc = null, saidaExecuteAddrCalc = null,
+            entradaMemoryAccess = null, saidaMemoryAccess = null, entradaWriteBack = null, saidaWriteBack = null;
+
     public static void main(String[] args) throws FileNotFoundException {
         listaOperacoes = carregaArquivoEmLista(caminhoArquivoInstrucoes);
 
-        while(true) {
 
-            sc.next();
+        // remove later
+        InstructionStruct structTest = new InstructionStruct(2, 0, 0,0,0,0,0, true);
+
+        while(true) {
+            entradaInstructionFetch = structTest;
+            entradaInstructionDecode = saidaInstructionFetch;
+            entradaExecuteAddrCalc = saidaInstructionDecode;
+            entradaMemoryAccess = saidaExecuteAddrCalc;
+            entradaWriteBack = saidaMemoryAccess;
+
+            // process stuff
+            saidaInstructionFetch = instructionFetch(structTest); // change
+            saidaInstructionDecode = instructionDecode(entradaInstructionDecode);
+            saidaExecuteAddrCalc = executeAddrCalc(entradaExecuteAddrCalc);
+            saidaMemoryAccess = memoryAccess(entradaMemoryAccess);
+            saidaWriteBack = writeBack(entradaWriteBack);
+
+            sc.nextLine();
+
+            System.out.println("saidaInstructionFetch: " + (saidaInstructionFetch != null ? saidaInstructionFetch.getOpcode() : null));
+            System.out.println("saidaInstructionDecode: " + (saidaInstructionDecode != null ? saidaInstructionDecode.getOpcode() : null));
+            System.out.println("saidaExecuteAddrCalc: " + (saidaExecuteAddrCalc != null ? saidaExecuteAddrCalc.getOpcode() : null));
+            System.out.println("saidaMemoryAccess: " + (saidaMemoryAccess != null ? saidaMemoryAccess.getOpcode() : null));
+            System.out.println("saidaWriteBack: " + (saidaWriteBack != null ? saidaWriteBack.getOpcode() : null));
         }
     }
 
     private static InstructionStruct writeBack(final InstructionStruct struct) {
-        return null;
+        return struct;
     }
 
     private static InstructionStruct memoryAccess(final InstructionStruct struct) {
-        return null;
+        return struct;
     }
 
     private static InstructionStruct executeAddrCalc(final InstructionStruct struct) {
-        return null;
+        return struct;
     }
 
     private static InstructionStruct instructionDecode(final InstructionStruct struct) {
-        return null;
+        return struct;
     }
 
     private static InstructionStruct instructionFetch(final InstructionStruct struct) {
-        return null;
+        return struct;
     }
 
     private static List<String> carregaArquivoEmLista(final String caminhoArquivo) throws FileNotFoundException {
