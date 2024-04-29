@@ -3,13 +3,13 @@ package org.unisinos;
 public class InstructionDecodeStruct {
     private String opcode;
     private int destinationRegister;
-    private int offset;
+    private int offsetValue;
     private int valueB;
     private int valueA;
-    public InstructionDecodeStruct(String opcode, int destinationRegister, int offset, int valueB, int valueA) {
+    public InstructionDecodeStruct(String opcode, int destinationRegister, int offsetValue, int valueB, int valueA) {
         this.opcode = opcode;
         this.destinationRegister = destinationRegister;
-        this.offset = offset;
+        this.offsetValue = offsetValue;
         this.valueB = valueB;
         this.valueA = valueA;
     }
@@ -30,12 +30,12 @@ public class InstructionDecodeStruct {
         this.destinationRegister = destinationRegister;
     }
 
-    public int getOffset() {
-        return offset;
+    public int getOffsetValue() {
+        return offsetValue;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public void setOffsetValue(int offsetValue) {
+        this.offsetValue = offsetValue;
     }
 
     public int getValueB() {
@@ -59,7 +59,7 @@ public class InstructionDecodeStruct {
         return "InstructionDecodeStruct{" +
                 "opcode='" + opcode + '\'' +
                 ", destinationRegister=" + destinationRegister +
-                ", offset=" + offset +
+                ", offset=" + offsetValue +
                 ", valueB=" + valueB +
                 ", valueA=" + valueA +
                 '}';

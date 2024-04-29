@@ -1,85 +1,102 @@
 package org.unisinos;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    private static final Scanner sc = new Scanner(System.in);
-    private static final String caminhoArquivoInstrucoes = "src/main/resources/instructions.txt";
-    private static List<String> listaOperacoes = new ArrayList<>();
-    private static int pc = 0;
-    private static InstructionStruct entradaInstructionFetch;
-    private static InstructionStruct saidaInstructionFetch = null, entradaInstructionDecode = null,
-            saidaInstructionDecode = null, entradaExecuteAddrCalc = null, saidaExecuteAddrCalc = null,
-            entradaMemoryAccess = null, saidaMemoryAccess = null, entradaWriteBack = null, saidaWriteBack = null;
+    private static Scanner sc = new Scanner(System.in);
+    private static int[] registers = new int[32]; // Registradores MIPS
+    private static int pc = 0; // Contador de programa
+    static String[] instructions = new String[100]; // Supondo que o arquivo tenha no máximo 100 linhas
+    private static Map<String, Integer> labels = new HashMap<>(); // Mapa para armazenar rótulos e seus valores
+
+    private static int entradaInstructionFetch = 0;
+    private static String saidaInstructionFetch = null;
+    private static String entradaInstructionDecode = null;
+    private static InstructionDecodeStruct saidaInstructionDecode = null;
+    private static InstructionDecodeStruct entradaInstructionExecute = null;
+    private static InstructionExecuteStruct saidaInstructionExecute = null;
+    private static InstructionExecuteStruct entradaMemoryAccess = null;
+    private static InstructionMemoryAccessStruct saidaMemoryAccess = null;
+    private static InstructionMemoryAccessStruct entradaWriteBack = null;
+
+
+
+
 
     public static void main(String[] args) throws FileNotFoundException {
-        listaOperacoes = carregaArquivoEmLista(caminhoArquivoInstrucoes);
+        try {
+            // Ler o arquivo de entrada
+            BufferedReader reader = new BufferedReader(new FileReader("instrucoes.txt"));
+            String line;
 
+            // Carregar as instruções em uma matriz de strings
 
-        // remove later
-        InstructionStruct structTest = new InstructionStruct(2, 0, 0,0,0,0,0, true);
+            int numInstructions = 0;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().isEmpty()) { // Ignorar linhas em branco
+                    instructions[numInstructions++] = line;
+                }
+            }
+            reader.close();
+
+            // Processar as instruções para buscar e armazenar valores de rótulos
+            processLabels(instructions, numInstructions);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         while(true) {
-            entradaInstructionFetch = structTest;
             entradaInstructionDecode = saidaInstructionFetch;
-            entradaExecuteAddrCalc = saidaInstructionDecode;
-            entradaMemoryAccess = saidaExecuteAddrCalc;
+            entradaInstructionExecute = saidaInstructionDecode;
+            entradaMemoryAccess = saidaInstructionExecute;
             entradaWriteBack = saidaMemoryAccess;
 
             // process stuff
-//            saidaInstructionFetch = instructionFetch(structTest); // change
-//            saidaInstructionDecode = instructionDecode(entradaInstructionDecode);
-//            saidaExecuteAddrCalc = executeAddrCalc(entradaExecuteAddrCalc);
-//            saidaMemoryAccess = memoryAccess(entradaMemoryAccess);
-//            saidaWriteBack = writeBack(entradaWriteBack);
+            saidaInstructionFetch = instructionFetch(pc); // change
+            saidaInstructionDecode = instructionDecode(entradaInstructionDecode);
+            //saidaExecuteAddrCalc = executeAddrCalc(entradaExecuteAddrCalc);
+            //saidaMemoryAccess = memoryAccess(entradaMemoryAccess);
+            //saidaWriteBack = writeBack(entradaWriteBack);
 
             sc.nextLine();
 
-            System.out.println("saidaInstructionFetch: " + (saidaInstructionFetch != null ? saidaInstructionFetch.getOpcode() : null));
-            System.out.println("saidaInstructionDecode: " + (saidaInstructionDecode != null ? saidaInstructionDecode.getOpcode() : null));
-            System.out.println("saidaExecuteAddrCalc: " + (saidaExecuteAddrCalc != null ? saidaExecuteAddrCalc.getOpcode() : null));
-            System.out.println("saidaMemoryAccess: " + (saidaMemoryAccess != null ? saidaMemoryAccess.getOpcode() : null));
-            System.out.println("saidaWriteBack: " + (saidaWriteBack != null ? saidaWriteBack.getOpcode() : null));
         }
     }
 
-    private static void writeBack(final InstructionMemoryAccessStruct struct) {
-
+    private static void processLabels(String[] instructions, int numInstructions) {
+        for (int i = 0; i < numInstructions; i++) {
+            String instruction = instructions[i];
+            String[] parts = instruction.split(" ");
+            if (parts.length > 1 && parts[1].equals(".fill")) {
+                String label = parts[0];
+                int value = Integer.parseInt(parts[2]);
+                labels.put(label, value);
+            }
+        }
     }
 
-    private static InstructionMemoryAccessStruct memoryAccess(final InstructionExecuteStruct struct) {
-        return null;
+    private static void instructionWriteback() {
+        InstructionMemoryAccessStruct struct = null;
     }
 
-    private static InstructionExecuteStruct executeAddrCalc(final InstructionDecodeStruct struct) {
-        return null;
+    private static void instructionMemoryAccess() {
+        final InstructionExecuteStruct struct;
     }
 
-    private static InstructionDecodeStruct instructionDecode(final String instruction) {
+    private static void instructionExecute() {
+        final InstructionDecodeStruct struct;
+    }
+
+    private static InstructionDecodeStruct instructionDecode(String actualInstruction) {
+        //Split the string but assert it is not null before
         return null;
     }
 
     private static String instructionFetch(final int pc) {
-        return null;
-    }
-
-    private static List<String> carregaArquivoEmLista(final String caminhoArquivo) throws FileNotFoundException {
-        final List<String> tempListaOperacoes = new ArrayList<>();
-        final File arquivo = new File(caminhoArquivo);
-        final Scanner fileScanner = new Scanner(arquivo);
-
-        while (fileScanner.hasNextLine()) {
-            String linha = fileScanner.nextLine();
-            tempListaOperacoes.add(linha);
-        }
-
-        fileScanner.close();
-        return tempListaOperacoes;
+        return instructions[pc];
     }
 
 }
