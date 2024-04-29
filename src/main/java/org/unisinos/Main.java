@@ -11,6 +11,7 @@ public class Main {
     static String[] instructions = new String[100]; // Supondo que o arquivo tenha no máximo 100 linhas
     private static Map<String, Integer> labels = new HashMap<>(); // Mapa para armazenar rótulos e seus valores
     private static List<String> supportedOperations = new ArrayList<>(Arrays.asList("addi", "add", "sub", "subi", "beq", "j", "noop"));
+    private static boolean halted = false; // Indica se o programa foi encerrado
 
     private static String saidaInstructionFetch = null;
     private static String entradaInstructionDecode = null;
@@ -68,12 +69,19 @@ public class Main {
             System.out.println("Instruction Write Back: " + entradaWriteBack);
             System.out.println("Registers: " + Arrays.toString(registers));
 
-            pc++;
-
-            System.out.println("\nPressione enter para continuar ou digite 'exit' para sair.");
-            if(sc.nextLine() == "exit") {
+            if(halted) {
+                System.out.println("Programa encerrado.");
                 break;
             }
+
+            System.out.println("\nPressione enter para continuar ou digite 'exit' para sair.");
+            if(sc.nextLine() == "exit" ) {
+                break;
+            }
+
+            pc++;
+
+
 
         }
     }
@@ -91,7 +99,7 @@ public class Main {
             }
 
             if (!supportedOperations.contains(label)){
-                labels.put(label, i+1);
+                labels.put(label, i);
                 instructions[i] = instructions[i].substring(label.length() + 1);
             }
 
@@ -100,6 +108,10 @@ public class Main {
 
     private static void instructionWriteback(InstructionMemoryAccessStruct struct) {
         if(struct != null) {
+            if(struct.getOpcode().equals("halt")) {
+                halted = true;
+                return;
+            }
             registers[struct.getDestinyRegister()] = struct.getAluResult();
         }
     }
@@ -118,6 +130,13 @@ public class Main {
                     return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0,struct.getOffsetValue()+registers[struct.getValueA()],false);
                 case "add":
                     return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0, registers[struct.getValueA()]+registers[struct.getValueB()],false);
+                case "beq":
+                    if(registers[struct.getValueA()] == registers[struct.getValueB()]) {
+                        pc = struct.getOffsetValue() - 1;
+                    }
+                    return null;
+                case "halt":
+                    return new InstructionExecuteStruct(struct.getOpcode(), 0,0,0,false);
             }
         }
         return null;
@@ -146,6 +165,18 @@ public class Main {
                     int sourceRegisterAdd = Integer.parseInt(parts[2]);
                     int sourceRegisterAdd2 = Integer.parseInt(parts[3]);
                     return new InstructionDecodeStruct(opcode,destRegisterAdd, 0,sourceRegisterAdd,sourceRegisterAdd2);
+                case "beq":
+                    int register1 = Integer.parseInt(parts[1]);
+                    int register2 = Integer.parseInt(parts[2]);
+                    int label;
+                    if (Character.isDigit(parts[3].charAt(0)) || parts[3].charAt(0) == '-') {
+                        label = Integer.parseInt(parts[3]);
+                    } else {
+                        label = labels.get(parts[3]);
+                    }
+                    return new InstructionDecodeStruct(opcode,0, label,register1,register2);
+                case "halt":
+                    return new InstructionDecodeStruct(opcode,0, 0,0,0);
             }
         }
         return null;
