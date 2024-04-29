@@ -95,6 +95,7 @@ public class Main {
             if (parts.length > 1 && parts[1].equals(".fill")) {
                 int value = Integer.parseInt(parts[2]);
                 labels.put(label, value);
+                instructions[i] = "noop";
                 continue;
             }
 
