@@ -10,7 +10,7 @@ public class Main {
     private static int pc = 0;
     static String[] instructions = new String[100]; // Supondo que o arquivo tenha no máximo 100 linhas
     private static final Map<String, Integer> labels = new HashMap<>(); // Mapa para armazenar rótulos e seus valores
-    private static final List<String> supportedOperations = new ArrayList<>(Arrays.asList("addi", "add", "sub", "subi", "beq", "j", "noop"));
+    private static final List<String> supportedOperations = new ArrayList<>(Arrays.asList("addi", "add", "sub", "subi", "beq", "j", "noop", "halt"));
     private static boolean halted = false; // Indica se o programa foi encerrado
 
     private static String saidaInstructionFetch = null;
