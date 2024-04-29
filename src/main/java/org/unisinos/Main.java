@@ -11,7 +11,7 @@ public class Main {
     private static final Scanner sc = new Scanner(System.in);
     private static final String caminhoArquivoInstrucoes = "src/main/resources/instructions.txt";
     private static List<String> listaOperacoes = new ArrayList<>();
-    private static int PC = 0;
+    private static int pc = 0;
     private static InstructionStruct entradaInstructionFetch;
     private static InstructionStruct saidaInstructionFetch = null, entradaInstructionDecode = null,
             saidaInstructionDecode = null, entradaExecuteAddrCalc = null, saidaExecuteAddrCalc = null,
@@ -32,11 +32,11 @@ public class Main {
             entradaWriteBack = saidaMemoryAccess;
 
             // process stuff
-            saidaInstructionFetch = instructionFetch(structTest); // change
-            saidaInstructionDecode = instructionDecode(entradaInstructionDecode);
-            saidaExecuteAddrCalc = executeAddrCalc(entradaExecuteAddrCalc);
-            saidaMemoryAccess = memoryAccess(entradaMemoryAccess);
-            saidaWriteBack = writeBack(entradaWriteBack);
+//            saidaInstructionFetch = instructionFetch(structTest); // change
+//            saidaInstructionDecode = instructionDecode(entradaInstructionDecode);
+//            saidaExecuteAddrCalc = executeAddrCalc(entradaExecuteAddrCalc);
+//            saidaMemoryAccess = memoryAccess(entradaMemoryAccess);
+//            saidaWriteBack = writeBack(entradaWriteBack);
 
             sc.nextLine();
 
@@ -48,24 +48,24 @@ public class Main {
         }
     }
 
-    private static InstructionStruct writeBack(final InstructionStruct struct) {
-        return struct;
+    private static void writeBack(final InstructionMemoryAccessStruct struct) {
+
     }
 
-    private static InstructionStruct memoryAccess(final InstructionStruct struct) {
-        return struct;
+    private static InstructionMemoryAccessStruct memoryAccess(final InstructionExecuteStruct struct) {
+        return null;
     }
 
-    private static InstructionStruct executeAddrCalc(final InstructionStruct struct) {
-        return struct;
+    private static InstructionExecuteStruct executeAddrCalc(final InstructionDecodeStruct struct) {
+        return null;
     }
 
-    private static InstructionStruct instructionDecode(final InstructionStruct struct) {
-        return struct;
+    private static InstructionDecodeStruct instructionDecode(final String instruction) {
+        return null;
     }
 
-    private static InstructionStruct instructionFetch(final InstructionStruct struct) {
-        return struct;
+    private static String instructionFetch(final int pc) {
+        return null;
     }
 
     private static List<String> carregaArquivoEmLista(final String caminhoArquivo) throws FileNotFoundException {
