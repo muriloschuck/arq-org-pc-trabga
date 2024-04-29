@@ -7,11 +7,11 @@ public class Main {
 
     private static Scanner sc = new Scanner(System.in);
     private static int[] registers = new int[32]; // Registradores MIPS
-    private static int pc = 0; // Contador de programa
+    private static int pc = 0;
     static String[] instructions = new String[100]; // Supondo que o arquivo tenha no máximo 100 linhas
     private static Map<String, Integer> labels = new HashMap<>(); // Mapa para armazenar rótulos e seus valores
+    private static List<String> supportedOperations = new ArrayList<>(Arrays.asList("addi", "add", "sub", "subi", "beq", "j", "noop"));
 
-    private static int entradaInstructionFetch = 0;
     private static String saidaInstructionFetch = null;
     private static String entradaInstructionDecode = null;
     private static InstructionDecodeStruct saidaInstructionDecode = null;
@@ -57,11 +57,24 @@ public class Main {
             // process stuff
             saidaInstructionFetch = instructionFetch(pc); // change
             saidaInstructionDecode = instructionDecode(entradaInstructionDecode);
-            //saidaExecuteAddrCalc = executeAddrCalc(entradaExecuteAddrCalc);
-            //saidaMemoryAccess = memoryAccess(entradaMemoryAccess);
-            //saidaWriteBack = writeBack(entradaWriteBack);
+            saidaInstructionExecute = instructionExecute(entradaInstructionExecute);
+            saidaMemoryAccess = instructionMemoryAccess(entradaMemoryAccess);
+            instructionWriteback(entradaWriteBack);
 
-            sc.nextLine();
+
+
+            System.out.println("Instruction Fetch: " + pc);
+            System.out.println("Instruction Decode: " + entradaInstructionDecode);
+            System.out.println("Instruction Execute: " + entradaInstructionExecute);
+            System.out.println("Instruction Memory Access: " + entradaMemoryAccess);
+            System.out.println("Instruction Write Back: " + entradaWriteBack);
+
+            pc++;
+
+            System.out.println("\nPressione enter para continuar ou digite 'exit' para sair.");
+            if(sc.nextLine() == "exit") {
+                break;
+            }
 
         }
     }
@@ -70,28 +83,65 @@ public class Main {
         for (int i = 0; i < numInstructions; i++) {
             String instruction = instructions[i];
             String[] parts = instruction.split(" ");
+            String label = parts[0];
+
             if (parts.length > 1 && parts[1].equals(".fill")) {
-                String label = parts[0];
                 int value = Integer.parseInt(parts[2]);
                 labels.put(label, value);
+                continue;
             }
+
+            if (!supportedOperations.contains(label)){
+                labels.put(label, i+1);
+                instructions[i] = instructions[i].substring(label.length() + 1);
+            }
+
         }
     }
 
-    private static void instructionWriteback() {
-        InstructionMemoryAccessStruct struct = null;
+    private static void instructionWriteback(InstructionMemoryAccessStruct struct) {
+        if(struct != null) {
+            registers[struct.getDestinyRegister()] = struct.getAluResult();
+        }
     }
 
-    private static void instructionMemoryAccess() {
-        final InstructionExecuteStruct struct;
+    private static InstructionMemoryAccessStruct instructionMemoryAccess(InstructionExecuteStruct struct) {
+        if(struct != null) {
+            return new InstructionMemoryAccessStruct(struct.getOpcode() ,struct.getDestinationRegister(),0, struct.getALUResult());
+        }
+        return null;
     }
 
-    private static void instructionExecute() {
-        final InstructionDecodeStruct struct;
+    private static InstructionExecuteStruct instructionExecute(InstructionDecodeStruct struct) {
+        if(struct != null) {
+            switch (struct.getOpcode()) {
+                case "addi":
+                    return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0,struct.getOffsetValue()+struct.getValueB(),false);
+            }
+        }
+        return null;
+
     }
 
     private static InstructionDecodeStruct instructionDecode(String actualInstruction) {
         //Split the string but assert it is not null before
+        if(actualInstruction != null) {
+            String[] parts = actualInstruction.split(" ");
+            String opcode = parts[0];
+
+            switch (opcode) {
+                case "addi":
+                    int destRegister = Integer.parseInt(parts[2].substring(1));
+                    int sourceRegister = Integer.parseInt(parts[1].substring(1));
+                    int immediateValue;
+                    if (Character.isDigit(parts[3].charAt(0)) || parts[3].charAt(0) == '-') {
+                        immediateValue = Integer.parseInt(parts[3]);
+                    } else {
+                        immediateValue = labels.get(parts[3]);
+                    }
+                    return new InstructionDecodeStruct(opcode,destRegister, immediateValue,sourceRegister,0);
+            }
+        }
         return null;
     }
 

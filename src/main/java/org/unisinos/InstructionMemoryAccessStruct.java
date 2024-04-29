@@ -44,4 +44,14 @@ public class InstructionMemoryAccessStruct {
     public void setAluResult(int aluResult) {
         this.aluResult = aluResult;
     }
+
+    @Override
+    public String toString() {
+        return "InstructionMemoryAccessStruct{" +
+                "opcode='" + opcode + '\'' +
+                ", destinyRegister=" + destinyRegister +
+                ", memoryData=" + memoryData +
+                ", aluResult=" + aluResult +
+                '}';
+    }
 }

@@ -64,6 +64,7 @@ public class MIPSProcessorSimulation {
 
             if (!supportedOperations.contains(label)){
                 labels.put(label, i+1);
+                instructions[i] = instructions[i].substring(label.length() + 1);
             }
 
         }
