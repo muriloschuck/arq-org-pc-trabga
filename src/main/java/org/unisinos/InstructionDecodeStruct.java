@@ -4,14 +4,14 @@ public class InstructionDecodeStruct {
     private String opcode;
     private int destinationRegister;
     private int offsetValue;
-    private int valueB;
     private int valueA;
-    public InstructionDecodeStruct(String opcode, int destinationRegister, int offsetValue, int valueB, int valueA) {
+    private int valueB;
+    public InstructionDecodeStruct(String opcode, int destinationRegister, int offsetValue, int valueA, int valueB) {
         this.opcode = opcode;
         this.destinationRegister = destinationRegister;
         this.offsetValue = offsetValue;
-        this.valueB = valueB;
         this.valueA = valueA;
+        this.valueB = valueB;
     }
 
     public String getOpcode() {
@@ -38,14 +38,6 @@ public class InstructionDecodeStruct {
         this.offsetValue = offsetValue;
     }
 
-    public int getValueB() {
-        return valueB;
-    }
-
-    public void setValueB(int valueB) {
-        this.valueB = valueB;
-    }
-
     public int getValueA() {
         return valueA;
     }
@@ -54,14 +46,22 @@ public class InstructionDecodeStruct {
         this.valueA = valueA;
     }
 
+    public int getValueB() {
+        return valueB;
+    }
+
+    public void setValueB(int valueB) {
+        this.valueB = valueB;
+    }
+
     @Override
     public String toString() {
         return "InstructionDecodeStruct{" +
                 "opcode='" + opcode + '\'' +
                 ", destinationRegister=" + destinationRegister +
                 ", offset=" + offsetValue +
-                ", valueB=" + valueB +
-                ", valueA=" + valueA +
+                ", valueB=" + valueA +
+                ", valueA=" + valueB +
                 '}';
     }
 }

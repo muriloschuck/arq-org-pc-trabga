@@ -23,8 +23,6 @@ public class Main {
 
 
 
-
-
     public static void main(String[] args) throws FileNotFoundException {
         try {
             // Ler o arquivo de entrada
@@ -68,6 +66,7 @@ public class Main {
             System.out.println("Instruction Execute: " + entradaInstructionExecute);
             System.out.println("Instruction Memory Access: " + entradaMemoryAccess);
             System.out.println("Instruction Write Back: " + entradaWriteBack);
+            System.out.println("Registers: " + Arrays.toString(registers));
 
             pc++;
 
@@ -116,7 +115,9 @@ public class Main {
         if(struct != null) {
             switch (struct.getOpcode()) {
                 case "addi":
-                    return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0,struct.getOffsetValue()+struct.getValueB(),false);
+                    return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0,struct.getOffsetValue()+registers[struct.getValueA()],false);
+                case "add":
+                    return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0, registers[struct.getValueA()]+registers[struct.getValueB()],false);
             }
         }
         return null;
@@ -140,6 +141,11 @@ public class Main {
                         immediateValue = labels.get(parts[3]);
                     }
                     return new InstructionDecodeStruct(opcode,destRegister, immediateValue,sourceRegister,0);
+                case "add":
+                    int destRegisterAdd = Integer.parseInt(parts[1]);
+                    int sourceRegisterAdd = Integer.parseInt(parts[2]);
+                    int sourceRegisterAdd2 = Integer.parseInt(parts[3]);
+                    return new InstructionDecodeStruct(opcode,destRegisterAdd, 0,sourceRegisterAdd,sourceRegisterAdd2);
             }
         }
         return null;
