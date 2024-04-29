@@ -3,14 +3,14 @@ package org.unisinos;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MIPSProcessorSimulation {
 
     private static int[] registers = new int[32]; // Registradores MIPS
     private static int pc = 0; // Contador de programa
     private static boolean halted = false; // Indica se o programa foi encerrado
+    private static List<String> supportedOperations = new ArrayList<>(Arrays.asList("addi", "add", "sub", "subi", "beq", "j", "noop"));
 
     private static Map<String, Integer> labels = new HashMap<>(); // Mapa para armazenar rótulos e seus valores
 
@@ -54,11 +54,18 @@ public class MIPSProcessorSimulation {
         for (int i = 0; i < numInstructions; i++) {
             String instruction = instructions[i];
             String[] parts = instruction.split(" ");
+            String label = parts[0];
+
             if (parts.length > 1 && parts[1].equals(".fill")) {
-                String label = parts[0];
                 int value = Integer.parseInt(parts[2]);
                 labels.put(label, value);
+                continue;
             }
+
+            if (!supportedOperations.contains(label)){
+                labels.put(label, i+1);
+            }
+
         }
     }
 
