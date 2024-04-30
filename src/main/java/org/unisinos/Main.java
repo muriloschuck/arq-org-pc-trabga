@@ -21,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
         // Ler o arquivo e carregar as instruções em uma matriz de strings
         int numInstructions = 0;
-        try (final BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/instructions-sub-j.txt"))) {
+        try (final BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/instructions.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty()) { // Ignorar linhas em branco
@@ -179,5 +179,4 @@ public class Main {
     private static String instructionFetch(final int pc) {
         return instructions[pc];
     }
-
 }
