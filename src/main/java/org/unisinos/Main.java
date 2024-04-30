@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Main {
 
-    private static Scanner sc = new Scanner(System.in);
+    private static final Scanner sc = new Scanner(System.in);
     private static final int[] registers = new int[32]; // Registradores MIPS
     private static int pc = 0;
     static String[] instructions = new String[100]; // Supondo que o arquivo tenha no máximo 100 linhas
@@ -18,29 +18,21 @@ public class Main {
     private static InstructionExecuteStruct saidaInstructionExecute = null;
     private static InstructionMemoryAccessStruct saidaMemoryAccess = null;
 
-
-    public static void main(String[] args) throws FileNotFoundException {
-        try {
-            // Ler o arquivo de entrada
-            BufferedReader reader = new BufferedReader(new FileReader("instrucoes.txt"));
+    public static void main(String[] args) {
+        // Ler o arquivo e carregar as instruções em uma matriz de strings
+        int numInstructions = 0;
+        try (final BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/instructions.txt"))) {
             String line;
-
-            // Carregar as instruções em uma matriz de strings
-
-            int numInstructions = 0;
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty()) { // Ignorar linhas em branco
                     instructions[numInstructions++] = line;
                 }
             }
-            reader.close();
-
-            // Processar as instruções para buscar e armazenar valores de rótulos
-            processLabels(instructions, numInstructions);
-
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
+
+        processLabels(instructions, numInstructions);
 
         while(true) {
             String entradaInstructionDecode = saidaInstructionFetch;
@@ -48,14 +40,12 @@ public class Main {
             InstructionExecuteStruct entradaMemoryAccess = saidaInstructionExecute;
             InstructionMemoryAccessStruct entradaWriteBack = saidaMemoryAccess;
 
-            // process stuff
-            saidaInstructionFetch = instructionFetch(pc); // change
+            // Processa instrucoes
+            saidaInstructionFetch = instructionFetch(pc);
             saidaInstructionDecode = instructionDecode(entradaInstructionDecode);
             saidaInstructionExecute = instructionExecute(entradaInstructionExecute);
             saidaMemoryAccess = instructionMemoryAccess(entradaMemoryAccess);
             instructionWriteback(entradaWriteBack);
-
-
 
             System.out.println("Instruction Fetch: " + pc);
             System.out.println("Instruction Decode: " + entradaInstructionDecode);
@@ -64,28 +54,25 @@ public class Main {
             System.out.println("Instruction Write Back: " + entradaWriteBack);
             System.out.println("Registers: " + Arrays.toString(registers));
 
-            if(halted) {
+            if (halted) {
                 System.out.println("Programa encerrado.");
                 break;
             }
 
             System.out.println("\nPressione enter para continuar ou digite 'exit' para sair.");
-            if(Objects.equals(sc.nextLine(), "exit")) {
+            if (Objects.equals(sc.nextLine(), "exit")) {
                 break;
             }
 
             pc++;
-
-
-
         }
     }
 
     private static void processLabels(String[] instructions, int numInstructions) {
         for (int i = 0; i < numInstructions; i++) {
-            String instruction = instructions[i];
-            String[] parts = instruction.split(" ");
-            String label = parts[0];
+            final String instruction = instructions[i];
+            final String[] parts = instruction.split(" ");
+            final String label = parts[0];
 
             if (parts.length > 1 && parts[1].equals(".fill")) {
                 int value = Integer.parseInt(parts[2]);
@@ -102,28 +89,32 @@ public class Main {
         }
     }
 
-    private static void instructionWriteback(InstructionMemoryAccessStruct struct) {
-        if(struct != null) {
-            if(struct.getOpcode().equals("halt")) {
+    private static void instructionWriteback(final InstructionMemoryAccessStruct struct) {
+        if (struct != null) {
+            if (struct.getOpcode().equals("halt")) {
                 halted = true;
                 return;
             }
-            if(struct.getOpcode().equals("noop") || struct.getOpcode().equals("j") || struct.getOpcode().equals("beq")) {
+
+            if (struct.getOpcode().equals("noop") || struct.getOpcode().equals("j") || struct.getOpcode().equals("beq")) {
                 return;
             }
+
+            // escreve no registrador
             registers[struct.getDestinyRegister()] = struct.getAluResult();
         }
     }
 
-    private static InstructionMemoryAccessStruct instructionMemoryAccess(InstructionExecuteStruct struct) {
-        if(struct != null) {
+    private static InstructionMemoryAccessStruct instructionMemoryAccess(final InstructionExecuteStruct struct) {
+        if (struct != null) {
             return new InstructionMemoryAccessStruct(struct.getOpcode() ,struct.getDestinationRegister(),0, struct.getALUResult());
         }
+
         return null;
     }
 
-    private static InstructionExecuteStruct instructionExecute(InstructionDecodeStruct struct) {
-        if(struct != null) {
+    private static InstructionExecuteStruct instructionExecute(final InstructionDecodeStruct struct) {
+        if (struct != null) {
             switch (struct.getOpcode()) {
                 case "addi":
                     return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0,struct.getOffsetValue()+registers[struct.getValueA()],false);
@@ -134,7 +125,7 @@ public class Main {
                 case "sub":
                     return new InstructionExecuteStruct(struct.getOpcode(), struct.getDestinationRegister(),0, registers[struct.getValueA()]-registers[struct.getValueB()],false);
                 case "beq":
-                    if(registers[struct.getValueA()] == registers[struct.getValueB()]) {
+                    if (registers[struct.getValueA()] == registers[struct.getValueB()]) {
                         pc = struct.getOffsetValue() - 1;
                     }
                     return new InstructionExecuteStruct(struct.getOpcode(), 0,0,0,false);
@@ -145,59 +136,47 @@ public class Main {
                     return new InstructionExecuteStruct(struct.getOpcode(), 0,0,0,false);
             }
         }
-        return null;
 
+        return null;
     }
 
-    private static InstructionDecodeStruct instructionDecode(String actualInstruction) {
-        //Split the string but assert it is not null before
-        if(actualInstruction != null) {
-            String[] parts = actualInstruction.split(" ");
-            String opcode = parts[0];
+    private static InstructionDecodeStruct instructionDecode(final String actualInstruction) {
+        if (actualInstruction != null) {
+            final String[] parts = actualInstruction.split(" ");
+            final String opcode = parts[0];
 
             switch (opcode) {
                 case "addi", "subi":
-                    int destRegister = Integer.parseInt(parts[2].substring(1));
-                    int sourceRegister = Integer.parseInt(parts[1].substring(1));
-                    int immediateValue;
-                    if (Character.isDigit(parts[3].charAt(0)) || parts[3].charAt(0) == '-') {
-                        immediateValue = Integer.parseInt(parts[3]);
-                    } else {
-                        immediateValue = labels.get(parts[3]);
-                    }
-                    return new InstructionDecodeStruct(opcode,destRegister, immediateValue,sourceRegister,0);
+                    final int destRegister = Integer.parseInt(parts[2].substring(1));
+                    final int sourceRegister = Integer.parseInt(parts[1].substring(1));
+                    final int immediateValue = getLabelValue(parts[3]);
+                    return new InstructionDecodeStruct(opcode, destRegister, immediateValue,sourceRegister,0);
                 case "add", "sub":
-                    int destRegisterAdd = Integer.parseInt(parts[1]);
-                    int sourceRegisterAdd = Integer.parseInt(parts[2]);
-                    int sourceRegisterAdd2 = Integer.parseInt(parts[3]);
-                    return new InstructionDecodeStruct(opcode,destRegisterAdd, 0,sourceRegisterAdd,sourceRegisterAdd2);
+                    final int destRegisterAdd = Integer.parseInt(parts[1]);
+                    final int sourceRegisterAdd = Integer.parseInt(parts[2]);
+                    final int sourceRegisterAdd2 = Integer.parseInt(parts[3]);
+                    return new InstructionDecodeStruct(opcode, destRegisterAdd,  0, sourceRegisterAdd, sourceRegisterAdd2);
                 case "beq":
                     int register1 = Integer.parseInt(parts[1]);
                     int register2 = Integer.parseInt(parts[2]);
-                    int label;
-                    if (Character.isDigit(parts[3].charAt(0)) || parts[3].charAt(0) == '-') {
-                        label = Integer.parseInt(parts[3]);
-                    } else {
-                        label = labels.get(parts[3]);
-                    }
-                    return new InstructionDecodeStruct(opcode,0, label,register1,register2);
+                    int label = getLabelValue(parts[3]);
+                    return new InstructionDecodeStruct(opcode, 0, label, register1, register2);
                 case "j":
-                    int labelJ;
-                    if (Character.isDigit(parts[1].charAt(0)) || parts[1].charAt(0) == '-') {
-                        labelJ = Integer.parseInt(parts[1]);
-                    } else {
-                        labelJ = labels.get(parts[1]);
-                    }
-                    return new InstructionDecodeStruct(opcode,0, labelJ,0,0);
+                    int labelJ = getLabelValue(parts[1]);
+                    return new InstructionDecodeStruct(opcode, 0, labelJ, 0, 0);
                 case "noop", "halt":
-                    return new InstructionDecodeStruct(opcode,0, 0,0,0);
+                    return new InstructionDecodeStruct(opcode, 0, 0, 0, 0);
             }
         }
+
         return null;
+    }
+
+    private static int getLabelValue(final String labelString) {
+        return Character.isDigit(labelString.charAt(0)) || labelString.charAt(0) == '-' ? Integer.parseInt(labelString) : labels.get(labelString);
     }
 
     private static String instructionFetch(final int pc) {
         return instructions[pc];
     }
-
 }
