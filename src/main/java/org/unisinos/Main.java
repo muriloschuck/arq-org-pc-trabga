@@ -8,6 +8,7 @@ public class Main {
     private static final Scanner sc = new Scanner(System.in);
     private static final int[] registers = new int[32]; // Registradores MIPS
     private static int pc = 0;
+    private static int clockPulses = 0;
     static String[] instructions = new String[100]; // Supondo que o arquivo tenha no máximo 100 linhas
     private static final Map<String, Integer> labels = new HashMap<>(); // Mapa para armazenar rótulos e seus valores
     private static final List<String> supportedOperations = new ArrayList<>(Arrays.asList("addi", "add", "sub", "subi", "beq", "j", "noop", "halt"));
@@ -21,7 +22,7 @@ public class Main {
     public static void main(String[] args) {
         // Ler o arquivo e carregar as instruções em uma matriz de strings
         int numInstructions = 0;
-        try (final BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/instructions.txt"))) {
+        try (final BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/instructions-sub-j.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.trim().isEmpty()) { // Ignorar linhas em branco
@@ -47,12 +48,18 @@ public class Main {
             saidaMemoryAccess = instructionMemoryAccess(entradaMemoryAccess);
             instructionWriteback(entradaWriteBack);
 
-            System.out.println("Instruction Fetch: " + pc);
-            System.out.println("Instruction Decode: " + entradaInstructionDecode);
-            System.out.println("Instruction Execute: " + entradaInstructionExecute);
-            System.out.println("Instruction Memory Access: " + entradaMemoryAccess);
-            System.out.println("Instruction Write Back: " + entradaWriteBack);
-            System.out.println("Registers: " + Arrays.toString(registers));
+
+            System.out.println("Entrada instruction fetch: " + (pc+1));
+            System.out.println("Saída instruction fetch: " + saidaInstructionFetch);
+            System.out.println("Entrada instruction decode: " + entradaInstructionDecode);
+            System.out.println("Saída instruction decode: " + saidaInstructionDecode);
+            System.out.println("Entrada instruction execute: " + entradaInstructionExecute);
+            System.out.println("Saída instruction execute: " + saidaInstructionExecute);
+            System.out.println("Entrada memory access: " + entradaMemoryAccess);
+            System.out.println("Saída memory access: " + saidaMemoryAccess);
+            System.out.println("Entrada write back: " + entradaWriteBack);
+            System.out.println("Registradores: " + Arrays.toString(registers));
+            System.out.println("Pulsos de clock: " + (clockPulses+1));
 
             if (halted) {
                 System.out.println("Programa encerrado.");
@@ -65,6 +72,7 @@ public class Main {
             }
 
             pc++;
+            clockPulses++;
         }
     }
 
