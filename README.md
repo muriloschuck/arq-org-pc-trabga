@@ -1,40 +1,35 @@
 # MIPS Processor Simulation
 
-Este é um programa Java para simular o processamento de um processador MIPS simplificado. Ele lê instruções de um arquivo, interpreta-as e simula a execução em um ambiente de simulação.
+This is a Java program to simulate the processing of a simplified MIPS processor. It reads instructions from a file, interprets them, and simulates execution in a simulation environment.
 
-## Funcionalidades
+## Features
 
-- Leitura de instruções de um arquivo.
-- Interpretação das instruções e simulação do processamento MIPS.
-- Rastreamento do estado dos registradores e dos pulsos de clock durante a execução.
+- Reading instructions from a file.
+- Interpreting instructions and simulating MIPS processing.
+- Tracking the state of registers and clock pulses during execution.
 
-## Como usar
+## Prerequisites
 
-1. Compile o código Java.
-2. Execute o programa Java compilado.
+- JDK 17 (Java Development Kit) installed for compilation and execution.
+- Instruction file containing the MIPS instructions to be processed (an example is provided at resources folder)
 
-## Pré-requisitos
+## How to Use
 
-- JDK (Java Development Kit) instalado para compilação e execução.
-- Arquivo de instruções contendo as instruções MIPS a serem processadas.
-
-## Instruções do Arquivo
-
-- O arquivo de instruções deve conter as instruções MIPS, uma por linha.
-- O programa suporta rótulos definidos usando a diretiva `.fill`.
-- As instruções suportadas são `addi`, `add`, `sub`, `subi`, `beq`, `j`, `noop` e `halt`.
-
-## Exemplo de Uso
-
-1. Compile o código Java:
+1. Compile the Java code:
 
    ```bash
    javac Main.java
    ```
 
-2. Execute o programa Java compilado:
+2. Execute the compiled Java program:
     ```bash
     java Main
     ```
-3. Insira o nome do arquivo de instruções quando solicitado.
-4. O programa executará a simulação e exibirá o estado dos registradores e os pulsos de clock.
+
+3. The program will run the simulation and display the state of the registers and clock pulses. Press `Enter` to go to the next clock pulse.
+
+## File Instructions
+
+- The instruction file should contain MIPS instructions, one per line.
+- The program supports labels defined using the `.fill` directive.
+- Supported instructions are `addi`, `add`, `sub`, `subi`, `beq`, `j`, `noop` and `halt`.
