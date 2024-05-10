@@ -2,10 +2,9 @@
 
 This is a Java program to simulate the processing of a simplified MIPS processor. It reads instructions from a file, interprets them, and simulates execution in a simulation environment.
 
-## Features
+## Functionalities
 
-- Reading instructions from a file.
-- Interpreting instructions and simulating MIPS processing.
+- Reading and interpreting instructions from a file.
 - Tracking the state of registers and clock pulses during execution.
 
 ## Prerequisites
